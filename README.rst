@@ -7,7 +7,7 @@ modules easily through the serial port.
 Installation
 ------------
 
-You need Python 3.7+ to use it.
+You need Python 3.5+ to use it.
 
 Install ``hcconfig`` with::
 

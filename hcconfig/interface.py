@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from collections import namedtuple
 from enum import Enum
 import os
 from pathlib import Path
@@ -18,7 +18,6 @@ def suggest_completions(string, completions):
     return [c for c in completions if c.startswith(string)]
 
 
-@dataclass
 class Parity(Enum):
     """
     Class to define the UART parity.
@@ -27,20 +26,11 @@ class Parity(Enum):
     odd = 1
     even = 2
 
-
-@dataclass
-class UARTConfiguration:
-    """
-    Class to keep all the UART configuration parameters.
-    """
-    baudrate: int
-    stopbits: int
-    parity: Parity
-
     def __repr__(self):
-        return 'UART(baudrate={}, stopbits={}, parity={})'.format(
-            self.baudrate, self.stopbits, self.parity.name)
+        return self.name
 
+
+UARTConfiguration = namedtuple('UARTConfig', 'baudrate stopbits parity')
 
 VALID = {
     'parity': [p.name for p in Parity],
@@ -130,17 +120,17 @@ class Interface(cmd.Cmd):
             if not baudrate in VALID['baudrate']:
                 print('Invalid value! Use one of {}'.format(VALID['baudrate']))
                 return
-            current.baudrate = int(baudrate)
+            current = current._replace(baudrate=int(baudrate))
         if stopbits is not None:
             if not stopbits in VALID['stopbits']:
                 print('Invalid value! Use one of {}'.format(VALID['stopbits']))
                 return
-            current.stopbits = int(stopbits)
+            current = current._replace(stopbits=int(stopbits))
         if parity is not None:
             if not parity in VALID['parity']:
                 print('Invalid value! Use one of {}'.format(VALID['parity']))
                 return
-            current.parity = Parity[parity]
+            current = current._replace(parity=Parity[parity])
         self.send('AT+UART={},{},{}\r\n'.format(
             current.baudrate, current.stopbits - 1, current.parity.value))
         self.get_response()
