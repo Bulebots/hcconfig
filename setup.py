@@ -26,7 +26,7 @@ setup(
     keywords='hcconfig bluetooth configuration hc-05 hc-06 hc-0x',
     entry_points={
         'console_scripts': [
-            'hcconfig = hcconfig.commands:run',
+            'hcconfig = hcconfig.interface:run',
         ],
     },
     packages=['hcconfig'],
