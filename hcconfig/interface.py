@@ -188,31 +188,37 @@ class Interface(cmd.Cmd):
 
         self.send('AT+NAME?\r\n')
         name = self.get_response('NAME:')
+        print(f'      Name: {name}')
+
         self.send('AT+UART?\r\n')
         uart = self.get_response('UART:').strip()
-        self.send('AT+PSWD?\r\n')
-        password = self.get_response('PIN:')
-        self.send('AT+ADDR?\r\n')
-        address = self.get_response('ADDR:')
-        self.send('AT+VERSION?\r\n')
-        version = self.get_response('VERSION:')
-        self.send('AT+ROLE?\r\n')
-        role = self.get_response('ROLE:')
-        self.send('AT+CMODE?\r\n')
-        mode = self.get_response('CMODE:')
         uart_parts = uart.split(',')
         stop_bits = VALID['stopbits'][int(uart_parts[1])]
         parity = VALID['parity'][int(uart_parts[2])]
-        role = VALID['role'][int(role)]
-        mode = VALID['cmode'][int(mode)]
-        print(f'      Name: {name}')
         print(f'  Baudrate: {uart_parts[0]}')
         print(f' Stop Bits: {stop_bits}')
         print(f'    Parity: {parity}')
+
+        self.send('AT+PSWD?\r\n')
+        password = self.get_response('')  # inconsistent response across modules
         print(f'  Password: {password}')
+
+        self.send('AT+ADDR?\r\n')
+        address = self.get_response('ADDR:')
         print(f'   Address: {address}')
+
+        self.send('AT+VERSION?\r\n')
+        version = self.get_response('VERSION:')
         print(f'   Version: {version}')
+
+        self.send('AT+ROLE?\r\n')
+        role = self.get_response('ROLE:')
+        role = VALID['role'][int(role)]
         print(f'      Role: {role}')
+
+        self.send('AT+CMODE?\r\n')
+        mode = self.get_response('CMODE:')
+        mode = VALID['cmode'][int(mode)]
         print(f'      Mode: {mode}')
 
     def do_address(self, arg=None):
