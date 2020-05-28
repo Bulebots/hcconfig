@@ -56,7 +56,7 @@ class Interface(cmd.Cmd):
         """
         while True:
             try:
-                self.serial = Serial(device, baudrate=baudrate, timeout=.05)
+                self.serial = Serial(device, baudrate=baudrate, timeout=.25)
             except serial.SerialException as e:
                 sys.stderr.write(f'could not open port {device}: {e}\n')
                 device = ask_for_port()
