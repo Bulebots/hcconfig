@@ -261,7 +261,7 @@ class Interface(cmd.Cmd):
             self.send('AT+PSWD="{}"\r\n'.format(pin))
             self.get_response()
         self.send('AT+PSWD?\r\n')
-        print(self.get_response(''))
+        print(self.get_response())
 
     def do_parity(self, parity=None):
         """
