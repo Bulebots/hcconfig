@@ -9,7 +9,6 @@ import cmd
 import click
 import serial
 from serial import Serial
-from serial.tools.list_ports import comports
 from serial.tools.miniterm import ask_for_port
 
 
