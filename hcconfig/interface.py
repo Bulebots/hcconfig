@@ -1,12 +1,22 @@
 from collections import namedtuple
 from enum import Enum
 import os
+import sys
 from pathlib import Path
 import re
 
 import cmd
 import click
+import serial
 from serial import Serial
+from serial.tools.list_ports import comports
+
+try:
+    raw_input
+except NameError:
+    # pylint: disable=redefined-builtin,invalid-name
+    raw_input = input  # in python3 it's "raw"
+    unichr = chr
 
 
 def suggest_completions(string, completions):
@@ -50,7 +60,14 @@ class Interface(cmd.Cmd):
         """
         Configure the interface with the appropriate serial parameters.
         """
-        self.serial = Serial(device, baudrate=baudrate, timeout=.05)
+        while True:
+            try:
+                self.serial = Serial(device, baudrate=baudrate, timeout=.05)
+            except serial.SerialException as e:
+                sys.stderr.write(f'could not open port {device}: {e}\n')
+                device = ask_for_port()
+            else:
+                break
 
     def cmdloop(self, intro=None):
         """
@@ -143,7 +160,6 @@ class Interface(cmd.Cmd):
         """
         exit()
         return True
-
 
     def do_EOF(self, arg=None):
         """
@@ -267,12 +283,51 @@ class Interface(cmd.Cmd):
         return suggest_completions(text, VALID['parity'])
 
 
+def ask_for_port():
+    """\
+    Show a list of ports and ask the user for a choice. To make selection
+    easier on systems with long device names, also allow the input of an
+    index.
+
+    Extracted from miniterm:
+    # This function is part of pySerial. https://github.com/pyserial/pyserial
+    # (C)2002-2017 Chris Liechti <cliechti@gmx.net>
+    #
+    # SPDX-License-Identifier:    BSD-3-Clause
+
+    """
+    sys.stderr.write('\n--- Available ports:\n')
+    ports = []
+    for n, (port, desc, hwid) in enumerate(sorted(comports()), 1):
+        sys.stderr.write('--- {:2}: {:20} {!r}\n'.format(n, port, desc))
+        ports.append(port)
+    while True:
+        port = raw_input('--- Enter port index or full name: ')
+        try:
+            index = int(port) - 1
+            if not 0 <= index < len(ports):
+                sys.stderr.write('--- Invalid index!\n')
+                continue
+        except ValueError:
+            pass
+        except KeyboardInterrupt:
+            sys.exit(1)
+        else:
+            port = ports[index]
+        return port
+
+
 @click.command()
-@click.argument('device', type=click.Path(readable=False),
-                default='/dev/ttyUSB0')
+@click.argument('device', type=click.Path(readable=False),required=False,)
 @click.option('-b', '--baud-rate', type=int, default=38400, help='Baud rate')
 def run(device, baud_rate):
     cli = Interface()
+    if device is None:
+        try:
+            device = ask_for_port()
+        except KeyboardInterrupt:
+            sys.stderr.write(' User Abort\n')
+            sys.exit(1)
     cli.configure(device=device, baudrate=baud_rate)
     cli.do_info()
     cli.cmdloop()
