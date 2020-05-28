@@ -26,9 +26,9 @@ You will be asked to select a serial port that you will use to connect with the 
 The default baudrate is 38400 which should be correct for most BT modules.
 
 Both the port and the baud rate can be optionally provided on the command line if you prefer. For example,
-you can:
+you can::
 
-   hcconfig --baud-rate 9600 /dev/ttyUSB1
+    hcconfig --baud-rate 9600 /dev/ttyUSB1
 
 See the currently available commands with::
 
