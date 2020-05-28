@@ -79,7 +79,7 @@ class Interface(cmd.Cmd):
         response = self.serial.read(200)
         if not response:
             return 'No response!'
-        response = response.decode('ascii')
+        response = response.decode('ascii').split('\n')[0]
         if 'ERROR' in response:
             print(response)
         if not field:
