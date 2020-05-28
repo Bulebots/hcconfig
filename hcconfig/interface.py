@@ -38,6 +38,8 @@ VALID = {
     'baudrate': ['4800', '9600', '19200', '38400', '57600', '115200',
                  '230400', '460800', '921600', '1382400', '1843200',
                  '2764800', '3686400'],
+    'role': ['slave', 'master', 'master-loop'],
+    'cmode': ['specific address', 'any address', 'slave-loop'],
 }
 
 
@@ -162,6 +164,46 @@ class Interface(cmd.Cmd):
         """
         self.send('AT+VERSION?\r\n')
         print(self.get_response('VERSION:'))
+
+    def do_info(self, arg=None):
+        """
+        Get Device summary.
+        """
+
+        self.send('AT\r\n')
+        response = self.get_response().strip()
+        if not response == 'OK':
+            print('Please connect a module set to command mode')
+            return
+
+        self.send('AT+NAME?\r\n')
+        name = self.get_response('NAME:')
+        self.send('AT+UART?\r\n')
+        uart = self.get_response('UART:').strip()
+        self.send('AT+PSWD?\r\n')
+        password = self.get_response('PIN:')
+        self.send('AT+ADDR?\r\n')
+        address = self.get_response('ADDR:')
+        self.send('AT+VERSION?\r\n')
+        version = self.get_response('VERSION:')
+        self.send('AT+ROLE?\r\n')
+        role = self.get_response('ROLE:')
+        self.send('AT+CMODE?\r\n')
+        mode = self.get_response('CMODE:')
+        uart_parts = uart.split(',')
+        stop_bits = VALID['stopbits'][int(uart_parts[1])]
+        parity = VALID['parity'][int(uart_parts[2])]
+        role = VALID['role'][int(role)]
+        mode = VALID['cmode'][int(mode)]
+        print(f'      Name: {name}')
+        print(f'  Baudrate: {uart_parts[0]}')
+        print(f' Stop Bits: {stop_bits}')
+        print(f'    Parity: {parity}')
+        print(f'  Password: {password}')
+        print(f'   Address: {address}')
+        print(f'   Version: {version}')
+        print(f'      Role: {role}')
+        print(f'      Mode: {mode}')
 
     def do_address(self, arg=None):
         """
