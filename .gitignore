@@ -1,5 +1,6 @@
 dist/
 pycache/
+venv/
 .cache/
 .tox/
 *.egg-info/
