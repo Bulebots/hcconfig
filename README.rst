@@ -20,9 +20,13 @@ Run it with::
 
    hcconfig
 
-That will try to connect with your Bluetooth device at ``/dev/ttyUSB0`` with
-the baudrate set to 38400. If you want to use other non-default configuration,
-you can::
+
+You will be asked to select a serial port that you will use to connect with the Bluetooth module.
+
+The default baudrate is 38400 which should be correct for most BT modules.
+
+Both the port and the baud rate can be optionally provided on the command line if you prefer. For example,
+you can:
 
    hcconfig --baud-rate 9600 /dev/ttyUSB1
 
