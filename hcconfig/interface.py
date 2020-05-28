@@ -283,7 +283,7 @@ class Interface(cmd.Cmd):
 
 
 @click.command()
-@click.argument('device', type=click.Path(readable=False),required=False,)
+@click.argument('device', type=click.Path(readable=False), required=False)
 @click.option('-b', '--baud-rate', type=int, default=38400, help='Baud rate')
 def run(device, baud_rate):
     cli = Interface()
