@@ -238,6 +238,17 @@ class Interface(cmd.Cmd):
             self.set_uart_configuration(stopbits=stopbits)
         print(self.get_uart_configuration())
 
+    def do_pin(self, pin=None):
+        """
+        Get or set the serial connection pin number.
+        """
+        if pin:
+            self.send('AT+PSWD="{}"\r\n'.format(pin))
+            self.get_response()
+        self.send('AT+PSWD?\r\n')
+        print(self.get_response('PIN:'))
+        self.do_info()
+
     def do_parity(self, parity=None):
         """
         Get or set the serial parity.
