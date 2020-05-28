@@ -1,6 +1,7 @@
 dist/
 pycache/
 venv/
+.idea/
 .cache/
 .tox/
 *.egg-info/
