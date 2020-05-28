@@ -274,6 +274,7 @@ class Interface(cmd.Cmd):
 def run(device, baud_rate):
     cli = Interface()
     cli.configure(device=device, baudrate=baud_rate)
+    cli.do_info()
     cli.cmdloop()
 
 
